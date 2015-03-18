@@ -8,6 +8,8 @@ $(document).ready(function(){
 
 $('#userList table tbody').on('click', 'td a.linkshowuser', showUserInfo);
 
+$('#btnAddUser').on('click', addUser);
+
 //Fill table with data
 function populateTable(){
 	var tableContent = '';
@@ -54,4 +56,52 @@ function showUserInfo(e){
 	$('#userInfoGender').text(thisUserObject.gender);
 	$('#userInfoLocation').text(thisUserObject.location);
 
+};
+
+//using ajax!
+function addUser(e){
+	e.preventDefault;
+
+	//basic validation - keeps track of no input
+	var errorCount = 0;
+	$('#addUser input').each(function(index, val){
+		if($(this).val() === ''){
+			errorCount++;
+		}
+	});
+
+	if(errorCount === 0){
+		var newUser = {
+			'username' : $('#addUser fieldset input#inputUserName').val(),
+			'email' : $('#addUser fieldset input#inputUserEmail').val(),
+			'fullname' : $('#addUser fieldset input#inputUserFullName').val(),
+			'age' : $('#addUser fieldset input#inputUserAge').val(),
+			'location' : $('#addUser fieldset input#inputUserLocation').val(),
+			'gender' : $('#addUser fieldset input#inputUserGender').val()
+		}
+
+		//use ajax to post the object to the userlist collection in mongodb
+		//the post route is at /users/adduser
+		//ajax chaining
+		$.ajax({
+			type: 'POST',
+			data: newUser,
+			url: '/users/adduser',
+			dataType: 'JSON'
+		}).done(function(response){
+			if (response.msg === ''){
+				//clear form
+				$('#addUser fieldset input').val();
+				populateTable();
+			}
+			else {
+				alert('Error: ' + response.msg);
+			}
+		});
+	}
+	else {
+		//if error count
+		alert('Please fill in all fields');
+		return false;
+	}
 };
