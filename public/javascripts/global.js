@@ -10,6 +10,9 @@ $('#userList table tbody').on('click', 'td a.linkshowuser', showUserInfo);
 
 $('#btnAddUser').on('click', addUser);
 
+//for .on, must reference static selector bc the actual rel is dynamically inserted
+$('#userList table tbody').on('click', 'td a.linkdeleteuser', deleteUser);
+
 //Fill table with data
 function populateTable(){
 	var tableContent = '';
@@ -105,3 +108,31 @@ function addUser(e){
 		return false;
 	}
 };
+
+function deleteUser(e){
+	e.preventDefault;
+
+	var confirmation = confirm('Are you sure you want to delete?');
+
+
+	if (confirmation === true){
+		$.ajax({
+			type: 'DELETE',
+			//rel on the linkdeleteuser class is set to this._id (which is the added identifier)
+			url: '/users/deleteuser/' + $(this).attr('rel')
+		}).done(function(response){
+			if (response.msg === ''){
+				//do nothing if success
+			}
+			else{
+				alert('Error: ' + response.msg);
+			}
+
+			populateTable();
+		});
+	}
+	else{
+		//nothing happens
+		return false;
+	}
+}
