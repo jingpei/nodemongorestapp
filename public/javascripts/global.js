@@ -91,7 +91,7 @@ function addUser(e){
 		}).done(function(response){
 			if (response.msg === ''){
 				//clear form
-				$('#addUser fieldset input').val();
+				$('#addUser fieldset input').val('');
 				populateTable();
 			}
 			else {
